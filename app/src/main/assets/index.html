@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+</style>
+</head>
+<body>
+<p>
+		<img id="my_image" style="display: none;" src="place_choice_screen.png" width="800" height="1280" border="0" usemap="#map" />
+
+<map name="map" id="map">
+
+    <area alt="" title="" href="#" shape="poly" coords="522,289,548,284,573,278,597,269,616,267,634,273,657,287,676,298,710,328,723,364,733,401,730,452,731,494,732,550,692,558,624,525,566,503,539,496" />
+</map>
+
+    
+<script>
+$(function(){
+    var image_is_loaded = false;
+    $("#my_image").load(function() {
+        $(this).data('width', $(this).attr('width')).data('height', $(this).attr('height'));
+        $($(this).attr('usemap')+" area").each(function(){
+            $(this).data('coords', $(this).attr('coords'));
+        });
+
+        $(this).css('width', '100%').css('height','auto').show();
+
+        image_is_loaded = true;
+        $(window).trigger('resize');
+    });
+
+
+    function ratioCoords (coords, ratio) {
+        coord_arr = coords.split(",");
+
+        for(i=0; i < coord_arr.length; i++) {
+            coord_arr[i] = Math.round(ratio * coord_arr[i]);
+        }
+
+        return coord_arr.join(',');
+    }
+    $(window).on('resize', function(){
+        if (image_is_loaded) {
+            var img = $("#my_image");
+            var ratio = img.width()/img.data('width');
+
+            $(img.attr('usemap')+" area").each(function(){
+                console.log('1: '+$(this).attr('coords'));
+                $(this).attr('coords', ratioCoords($(this).data('coords'), ratio));
+            });
+        }
+    });
+});
+</script></body>
+</html>
